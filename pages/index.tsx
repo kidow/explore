@@ -43,25 +43,64 @@ const HomePage = () => {
           {isLoading
             ? '불러오는 중...'
             : list.map((item, key) => (
-                <Link href={item.url} key={key}>
-                  <a target="_blank" rel="noreferrer">
-                    <div className="h-80 rounded-lg border border-neutral-700">
-                      <img
-                        src={item.image}
-                        alt=""
-                        className="h-40 w-full rounded-t-lg"
-                      />
-                      <div className="h-32 p-4">
-                        <div className="text-2xl font-bold text-neutral-200 line-clamp-2">
-                          {item.title}
-                        </div>
-                        <div className="text-neutral-500 line-clamp-3">
-                          {item.description}
+                <div className="divide-y divide-neutral-700 rounded-lg border border-neutral-700">
+                  <Link href={item.url} key={key}>
+                    <a target="_blank" rel="noreferrer">
+                      <div className="group h-80">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="h-40 w-full rounded-t-lg"
+                        />
+                        <div className="h-32 p-4">
+                          <div className="text-2xl font-bold text-neutral-200 line-clamp-2 group-hover:underline">
+                            {item.title}
+                          </div>
+                          <div className="text-neutral-500 line-clamp-3">
+                            {item.description}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </a>
-                </Link>
+                    </a>
+                  </Link>
+                  <div className="h-28 p-4">
+                    <ul className="list-inside list-disc text-neutral-400">
+                      <li>
+                        <Link href="https://google.com">
+                          <a
+                            target="_blank"
+                            className="hover:underline"
+                            rel="noreferrer"
+                          >
+                            Link
+                          </a>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="https://google.com">
+                          <a
+                            target="_blank"
+                            className="hover:underline"
+                            rel="noreferrer"
+                          >
+                            Link
+                          </a>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="https://google.com">
+                          <a
+                            target="_blank"
+                            className="hover:underline"
+                            rel="noreferrer"
+                          >
+                            Link
+                          </a>
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               ))}
         </div>
       </div>
