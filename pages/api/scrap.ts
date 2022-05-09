@@ -28,13 +28,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     let result: Array<urlMetadata.Result & { links: ILink[] }> = metadatas.map(item => ({ ...item, links: [] }))
     for (let index in result) {
       let links: ILink[] = []
-      let item = metadatas[index]
+      let item = result[index]
       switch (item.url) {
         case 'https://now.rememberapp.co.kr/':
           links = await getRememberNow()
+          break;
+        case 'https://www.ttimes.co.kr/':
+          links = await getTTimes()
+          break;
         default:
       }
-      result[index].links = links.slice(0, 3)
+      item.links = links.slice(0, 3)
     }
     return res.status(200).json(result)
   } catch (err) {
@@ -45,8 +49,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 const getRememberNow = async (): Promise<ILink[]> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const options = await getOptions()
-      const browser = await puppeteer.launch(options)
+      const browser = await puppeteer.launch({
+        executablePath, headless: IS_DEV, ignoreHTTPSErrors: true
+      })
       const page = await browser.newPage()
       await page.goto('https://now.rememberapp.co.kr')
       const content = await page.content()
@@ -54,6 +59,7 @@ const getRememberNow = async (): Promise<ILink[]> => {
       const list = $('#main > article')
       let result: ILink[] = []
       list.each((index, item) => {
+        if (index > 2) return
         const date = new Date()
         const createdAt = $(item).find('.now_post_header_mobile > .entry-date').text()
         if (createdAt === `${date.getFullYear()}년 ${twoDigitsNumber(new Date().getMonth() + 1)}월 ${twoDigitsNumber(date.getDate())}일`) {
@@ -74,13 +80,30 @@ const getRememberNow = async (): Promise<ILink[]> => {
 
 const getDevTo = async () => { }
 
-const getTTimes = async () => {
+const getTTimes = async (): Promise<ILink[]> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const options = await getOptions()
-      const browser = await puppeteer.launch(options)
+      const browser = await puppeteer.launch({
+        executablePath, headless: IS_DEV, ignoreHTTPSErrors: true
+      })
+      const page = await browser.newPage()
+      await page.goto('https://ttimes.co.kr')
+      const content = await page.content()
+      const $ = cheerio.load(content)
+      const list = $('.list-desktop-panel > div > .list-item')
+      let result: ILink[] = []
+      list.each((index, item) => {
+        if (index > 2) return
+        result.push({
+          url: $(item).find('div > .thumbnail > div > a').attr('href') || '',
+          title: $(item).find('div > .title > div > a > span').text()
+        })
+      })
+      await browser.close()
+      resolve(result)
     } catch (err) {
-
+      console.log(err)
+      resolve([])
     }
   })
 }

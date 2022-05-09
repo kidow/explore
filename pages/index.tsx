@@ -44,8 +44,11 @@ const HomePage = () => {
           {isLoading
             ? '불러오는 중...'
             : list.map((item, key) => (
-                <div className="divide-y divide-neutral-700 rounded-lg border border-neutral-700">
-                  <Link href={item.url} key={key}>
+                <div
+                  key={key}
+                  className="divide-y divide-neutral-700 rounded-lg border border-neutral-700"
+                >
+                  <Link href={item.url}>
                     <a target="_blank" rel="noreferrer">
                       <div className="group h-80">
                         <img
