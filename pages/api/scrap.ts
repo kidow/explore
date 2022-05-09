@@ -3,16 +3,16 @@ import urlMetadata from 'url-metadata'
 import puppeteer from 'puppeteer-core'
 import * as cheerio from 'cheerio'
 import { twoDigitsNumber } from 'services'
+import chrome from 'chrome-aws-lambda'
 
-
-
-const isDev = process.env.NODE_ENV === 'development'
+const IS_DEV = process.env.NODE_ENV === 'development'
 const executablePath =
   process.platform === 'win32'
     ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
     : process.platform === 'linux'
       ? '/usr/bin/google-chrome'
       : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+const getOptions = async () => ({ args: IS_DEV ? [] : chrome.args, executablePath: IS_DEV ? executablePath : await chrome.executablePath, headless: IS_DEV ? true : chrome.headless, ignoreHTTPSErrors: true })
 
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -45,7 +45,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 const getRememberNow = async (): Promise<ILink[]> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const browser = await puppeteer.launch({ args: [], executablePath, headless: true, ignoreHTTPSErrors: true })
+      const options = await getOptions()
+      const browser = await puppeteer.launch(options)
       const page = await browser.newPage()
       await page.goto('https://now.rememberapp.co.kr')
       const content = await page.content()
@@ -76,7 +77,8 @@ const getDevTo = async () => { }
 const getTTimes = async () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const browser = await puppeteer.launch({ args: [], executablePath })
+      const options = await getOptions()
+      const browser = await puppeteer.launch(options)
     } catch (err) {
 
     }
