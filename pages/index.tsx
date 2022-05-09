@@ -5,7 +5,7 @@ import type { Result } from 'url-metadata'
 import { useObjectState } from 'services'
 
 interface State {
-  list: Result[]
+  list: Array<Result & { links: ILink[] }>
   isLoading: boolean
 }
 
@@ -19,6 +19,7 @@ const HomePage = () => {
     try {
       const res = await fetch('/api/scrap')
       const data = await res.json()
+      console.log('data', data)
       setState({ list: data, isLoading: false })
     } catch (err) {
       console.log(err)
@@ -65,39 +66,19 @@ const HomePage = () => {
                   </Link>
                   <div className="h-28 p-4">
                     <ul className="list-inside list-disc text-neutral-400">
-                      <li>
-                        <Link href="https://google.com">
-                          <a
-                            target="_blank"
-                            className="hover:underline"
-                            rel="noreferrer"
-                          >
-                            Link
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="https://google.com">
-                          <a
-                            target="_blank"
-                            className="hover:underline"
-                            rel="noreferrer"
-                          >
-                            Link
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="https://google.com">
-                          <a
-                            target="_blank"
-                            className="hover:underline"
-                            rel="noreferrer"
-                          >
-                            Link
-                          </a>
-                        </Link>
-                      </li>
+                      {item.links.map((link, linkKey) => (
+                        <li key={linkKey}>
+                          <Link href={link.url}>
+                            <a
+                              target="_blank"
+                              className="hover:underline"
+                              rel="noreferrer"
+                            >
+                              {link.title}
+                            </a>
+                          </Link>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>

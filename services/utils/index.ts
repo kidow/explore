@@ -1,9 +1,2 @@
-export const getSurfit = async () => { }
-
-export const getMedium = async () => { }
-
-export const getRememberNow = async () => { }
-
-export const getDevTo = async () => { }
-
-export const getTTimes = async () => { }
+export const twoDigitsNumber = (digit: number): string =>
+  digit < 10 ? `0${digit}` : String(digit)
